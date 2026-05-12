@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="ML.Clustering/ML.Clustering.csproj" Id="a19db413-f5fa-42e5-970c-b0636442a3dc" />
+  <Project Path="ML.LSTM.TensorFlow/ML.LSTM.TensorFlow.csproj" Id="d8112a96-dd0a-47ec-9983-eff0d018ba51" />
+  <Project Path="ML.NaiveBayes/ML.NaiveBayes.csproj" Id="fb03d246-518c-4f4d-a8e7-d3c663a5c08e" />
   <Project Path="ML.Regression/ML.Regression.csproj" />
 </Solution>

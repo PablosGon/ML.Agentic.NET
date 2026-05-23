@@ -34,7 +34,8 @@ IEstimator<ITransformer> pipeline = context.Transforms.Categorical.OneHotEncodin
         nameof(HousePricing.GarageSize),
         $"{nameof(HousePricing.NeighbourhoodQuality)}Encoded"))
     .Append(context.Transforms.NormalizeMeanVariance("Features"))
-    .Append(context.Regression.Trainers.Sdca(nameof(HousePricing.HousePrice), "Features"));
+    .Append(context.Regression.Trainers.Sdca(nameof(HousePricing.HousePrice), "Features"))
+    .Append(context.Transforms.DropColumns($"{nameof(HousePricing.NeighbourhoodQuality)}Encoded"));
 ITransformer model = pipeline.Fit(trainingData);
 clock.Stop();
 var trainingTime = clock.ElapsedMilliseconds;

@@ -8,7 +8,7 @@
         public float YearBuilt { get; set; }
         public float LotSize { get; set; }
         public float GarageSize { get; set; }
-        public string NeighborhoodQuality { get; set; }
+        public string NeighborhoodQuality { get; set; } = string.Empty;
         public float HousePrice { get; set; }
     }
 }

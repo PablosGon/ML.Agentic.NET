@@ -4,24 +4,36 @@ using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Options;
+using ML.Agent.Models.Settings;
 using ML.Agent.Tools;
 
 namespace ML.Agent.Agent
 {
-    public class AgentFactory(IToolProvider toolProvider) : IAgentFactory
+    public class AgentFactory : IAgentFactory
     {
+        private IToolProvider _toolProvider;
+        private AgentSettings _agentSettings;
+        private BedrockSettings _bedrockSettings;
+
+        public AgentFactory(IToolProvider toolProvider, IOptions<AgentSettings> agentSettings, IOptions<BedrockSettings> bedrockSettings)
+        {
+            _toolProvider = toolProvider;
+            _agentSettings = agentSettings.Value;
+            _bedrockSettings = bedrockSettings.Value;
+        }
+
         public AIAgent Create()
         {
-            var region = RegionEndpoint.USEast1;
-            var awsCredentials = GetAwsCredentials("default");
+            var region = RegionEndpoint.GetBySystemName(_bedrockSettings.RegionName);
+            var awsCredentials = GetAwsCredentials(_bedrockSettings.ProfileName);
             var bedrockClient = new AmazonBedrockRuntimeClient(awsCredentials, region);
-            var chatClient = bedrockClient.AsIChatClient("modelID");
-            var tools = toolProvider.GetTools();
+            var chatClient = bedrockClient.AsIChatClient(_bedrockSettings.ModelId);
+            var tools = _toolProvider.GetTools();
 
             return chatClient.AsAIAgent(
-                instructions: "You are an agent",
-                name: "agent",
-                description: "",
+                name: _agentSettings.Name,
+                description: _agentSettings.Description,
                 tools: tools);
         }
 

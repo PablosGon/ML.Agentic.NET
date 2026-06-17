@@ -8,10 +8,12 @@ namespace ML.Agent.Tools
     public class ToolProvider : IToolProvider
     {
         private HttpClient _httpClient;
+        private HttpToolUrls _urls;
 
-        public ToolProvider(HttpClient httpClient)
+        public ToolProvider(HttpClient httpClient, IOptions<ToolsSettings> settings)
         {
             _httpClient = httpClient;
+            _urls = settings.Value.Urls;
         }
 
         public List<AITool> GetTools()
@@ -21,7 +23,7 @@ namespace ML.Agent.Tools
 
         private async Task<double> GetHousePrediction(Housing housing)
         {
-            var response = await _httpClient.PostAsJsonAsync("url", housing);
+            var response = await _httpClient.PostAsJsonAsync(_urls.HousingUrl, housing);
             var stringResponse = await response.Content.ReadAsStringAsync();
             return Convert.ToDouble(stringResponse);
         }

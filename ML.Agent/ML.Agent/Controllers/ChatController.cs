@@ -20,7 +20,7 @@ namespace ML.Agent.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch(Exception ex)
+            catch
             {
                 return StatusCode(500, "Internal server error");
             }

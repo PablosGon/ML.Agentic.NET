@@ -29,7 +29,7 @@ builder.Services.AddKeyedSingleton<AIAgent>("agent", (sp, _) =>
 
     return chatClient.AsAIAgent(
         instructions: "You are an agent",
-        name: "Agent",
+        name: "agent",
         description: "",
         tools: tools);
 });

@@ -4,7 +4,7 @@ using ML.Agent.Services.Interfaces;
 
 namespace ML.Agent.Services
 {
-    public class ChatService(AIAgent agent) : IChatService
+    public class ChatService([FromKeyedServices("agent")] AIAgent agent) : IChatService
     {
         public async Task<ChatResponse> Chat(ChatRequest request)
         {
@@ -19,7 +19,7 @@ namespace ML.Agent.Services
 
             return new ChatResponse
             {
-                Message = message
+                Message = response.Text
             };
         }
     }

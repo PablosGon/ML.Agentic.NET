@@ -5,6 +5,7 @@ using ML.Agent.Services.Interfaces;
 namespace ML.Agent.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     public class ChatController(IChatService service) : ControllerBase
     {
         [HttpPost]

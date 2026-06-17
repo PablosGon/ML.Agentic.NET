@@ -34,7 +34,7 @@ builder.Services.AddKeyedSingleton<AIAgent>("agent", (sp, _) =>
     return agentFactory.Create();
 });
 
-builder.AddA2AServer(builder.Configuration.GetValue<string>("Agent:Name"));
+builder.AddA2AServer("agent");
 
 var app = builder.Build();
 
@@ -54,7 +54,8 @@ app.MapA2AHttpJson("agent", "/a2a/agent");
 
 app.MapWellKnownAgentCard(new A2A.AgentCard
 {
-
+    Name = builder.Configuration.GetValue("Agent:Name"),
+    Description = builder.Configuration.GetValue("Agent:Description"),
 });
 
 app.Run();

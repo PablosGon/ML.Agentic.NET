@@ -2,7 +2,7 @@
 {
     public class ToolsSettings
     {
-        public HttpToolUrls Urls = new HttpToolUrls();
+        public HttpToolUrls Urls { get; set; } = new HttpToolUrls();
     }
 
     public class HttpToolUrls

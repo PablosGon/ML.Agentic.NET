@@ -19,11 +19,11 @@ namespace ML.Agent.Tools
             return [AIFunctionFactory.Create(GetHousePrediction)];
         }
 
-        private async Task<int> GetHousePrediction(Housing housing)
+        private async Task<double> GetHousePrediction(Housing housing)
         {
             var response = await _httpClient.PostAsJsonAsync("url", housing);
             var stringResponse = await response.Content.ReadAsStringAsync();
-            return Convert.ToInt32(stringResponse);
+            return Convert.ToDouble(stringResponse);
         }
     }
 }

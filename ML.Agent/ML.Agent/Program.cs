@@ -25,7 +25,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddKeyedSingleton<AIAgent>("agent", (sp, _) =>
 {
-    var agentFactory = sp.GetRequiredService<AgentFactory>();
+    var agentFactory = sp.GetRequiredService<IAgentFactory>();
     return agentFactory.Create();
 });
 

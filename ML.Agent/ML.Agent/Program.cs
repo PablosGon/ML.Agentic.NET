@@ -5,8 +5,10 @@ using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using ML.Agent.Agent;
 using ML.Agent.Services;
 using ML.Agent.Services.Interfaces;
+using ML.Agent.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,21 +19,14 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddSingleton<IToolProvider, ToolProvider>();
+builder.Services.AddSingleton<IAgentFactory, AgentFactory>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddKeyedSingleton<AIAgent>("agent", (sp, _) =>
 {
-    var region = RegionEndpoint.USEast1;
-    var awsCredentials = GetAwsCredentials("default");
-    var bedrockClient = new AmazonBedrockRuntimeClient(awsCredentials, region);
-    var chatClient = bedrockClient.AsIChatClient("modelID");
-
-    var tools = new List<AITool>();
-
-    return chatClient.AsAIAgent(
-        instructions: "You are an agent",
-        name: "agent",
-        description: "",
-        tools: tools);
+    var agentFactory = sp.GetRequiredService<AgentFactory>();
+    return agentFactory.Create();
 });
 
 builder.AddA2AServer("agent");
@@ -58,16 +53,3 @@ app.MapWellKnownAgentCard(new A2A.AgentCard
 });
 
 app.Run();
-
-static AWSCredentials GetAwsCredentials(string profile)
-{
-    ArgumentNullException.ThrowIfNullOrEmpty(profile, nameof(profile));
-
-    var chain = new CredentialProfileStoreChain();
-    if (!chain.TryGetAWSCredentials(profile, out var credentials))
-    {
-        throw new Exception($"Could not get credentials for profile {profile}");
-    }
-
-    return credentials;
-}

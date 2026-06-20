@@ -1,22 +1,25 @@
-﻿using Microsoft.ML;
+﻿using AutoMapper;
 using ML.API.Data;
-using ML.API.Domain;
+using ML.API.Models.Housing;
 
 namespace ML.API.Service
 {
-    public class HousingService : IInferenceService<HousePricing, double>
+    public class HousingService : IInferenceService<HousingRequest, HousingResponse>
     {
-        private readonly IModelRunner<HousePricing, HousePricingOutput> _modelRunner;
+        private readonly IModelRunner<HousingInput, HousingOutput> _modelRunner;
+        private readonly IMapper _mapper;
 
-        public HousingService(IModelRunner<HousePricing, HousePricingOutput> modelRunner)
+        public HousingService(IModelRunner<HousingInput, HousingOutput> modelRunner, IMapper mapper)
         {
             _modelRunner = modelRunner;
+            _mapper = mapper;
         }
 
-        public double Predict(HousePricing housePricing)
+        public HousingResponse Predict(HousingRequest request)
         {
-            var result = _modelRunner.Predict(housePricing);
-            return result.HousePrice;
+            var modelInput = _mapper.Map<HousingInput>(request);
+            var result = _modelRunner.Predict(modelInput);
+            return _mapper.Map<HousingResponse>(result);
         }
     }
 }

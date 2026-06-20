@@ -1,6 +1,4 @@
-﻿using ML.API.Domain;
-
-namespace ML.API.Service
+﻿namespace ML.API.Service
 {
     public interface IInferenceService<TInput, TOutput>
     {

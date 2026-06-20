@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using Tensorflow.Contexts;
-using Tensorflow.Keras.Metrics;
 using static Tensorflow.KerasApi;
 
 var clock = new Stopwatch();
@@ -12,7 +10,19 @@ clock.Start();
 var ((xTrain, yTrain), (xTest, yTest)) = keras.datasets.imdb.load_data(num_words: 10000, seed: 42);
 clock.Stop();
 var loadTime = clock.ElapsedMilliseconds;
+var xTrainList = xTrain.Select(x => x.ToArray<int>()).ToList();
+var xTestList = xTest.Select(x => x.ToArray<int>()).ToList();
+
 Console.WriteLine($"Data loaded and split in {loadTime} ms");
+
+clock.Restart();
+var maxLength = 256;
+xTrain = keras.preprocessing.sequence.pad_sequences(xTrainList, maxlen: maxLength);
+xTest = keras.preprocessing.sequence.pad_sequences(xTestList, maxlen: maxLength);
+clock.Stop();
+var paddingTime = clock.ElapsedMilliseconds;
+Console.WriteLine($"Data padded in {paddingTime} ms");
+
 
 clock.Restart();
 var layers = keras.layers;
@@ -23,7 +33,7 @@ var model = keras.Sequential(new List<Tensorflow.Keras.ILayer>
     layers.Dense(1, activation: "sigmoid")
 });
 model.compile(optimizer: "adam", loss: "binary_crossentropy", metrics: new[] { "accuracy" });
-var modelFit = model.fit(xTrain, yTrain);
+var modelFit = model.fit(xTrain, yTrain, epochs: 3, batch_size: 64, validation_split: 0.2f);
 clock.Stop();
 var trainingTime = clock.ElapsedMilliseconds;
 Console.WriteLine($"Model trained in {trainingTime} ms");
@@ -38,7 +48,7 @@ Console.WriteLine();
 Console.WriteLine("-- RESULTS --");
 var totalElapsedTime = loadTime + trainingTime + evaluationTime;
 Console.WriteLine($"Total elapsed time: {totalElapsedTime} ms");
-Console.WriteLine($"Average distance: {metrics}");
+Console.WriteLine($"Accuracy score : {metrics["accuracy"]}");
 Console.WriteLine();
 
 Console.WriteLine("Saving model...");

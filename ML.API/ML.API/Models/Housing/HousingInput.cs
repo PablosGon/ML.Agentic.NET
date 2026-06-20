@@ -1,6 +1,6 @@
-﻿namespace ML.API.Domain
+﻿namespace ML.API.Models.Housing
 {
-    public class HousePricing
+    public class HousingInput
     {
         public float SquareFootage { get; set; }
         public float NumBedrooms { get; set; }

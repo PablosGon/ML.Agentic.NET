@@ -55,7 +55,6 @@ Console.WriteLine($"Model trained in {trainingTime} ms");
 clock.Restart();
 IDataView predictions = model.Transform(test);
 var metrics = context.Clustering.Evaluate(predictions);
-Console.WriteLine($"Average Distance: {metrics.AverageDistance}");
 clock.Stop();
 var evaluationTime = clock.ElapsedMilliseconds;
 Console.WriteLine($"Model evaluated in {evaluationTime} ms");
@@ -65,6 +64,7 @@ Console.WriteLine("-- RESULTS --");
 var totalElapsedTime = loadTime + splitTime + trainingTime + evaluationTime;
 Console.WriteLine($"Total elapsed time: {totalElapsedTime} ms");
 Console.WriteLine($"Average distance: {metrics.AverageDistance}");
+Console.WriteLine($"Davies-Bouldin Index: {metrics.DaviesBouldinIndex}");
 Console.WriteLine();
 
 Console.WriteLine("Saving model...");

@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.ML;
-using ML.API.Domain;
+using ML.API.Models.Housing;
 
 namespace ML.API.Data
 {
-    public class HousingModelRunner : IModelRunner<HousePricing, HousePricingOutput>
+    public class HousingModelRunner : IModelRunner<HousingInput, HousingOutput>
     {
-        private readonly PredictionEnginePool<HousePricing, HousePricingOutput> _housingEnginePool;
+        private readonly PredictionEnginePool<HousingInput, HousingOutput> _housingEnginePool;
 
-        public HousingModelRunner(PredictionEnginePool<HousePricing, HousePricingOutput> housingEnginePool)
+        public HousingModelRunner(PredictionEnginePool<HousingInput, HousingOutput> housingEnginePool)
         {
             _housingEnginePool = housingEnginePool;
         }
 
-        public HousePricingOutput Predict(HousePricing input)
+        public HousingOutput Predict(HousingInput input)
         {
             return _housingEnginePool.Predict(input);
         }

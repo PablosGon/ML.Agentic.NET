@@ -26,15 +26,18 @@ clock.Restart();
 IEstimator<ITransformer> pipeline = context.Transforms.Categorical.OneHotEncoding(
     $"{nameof(HousePricing.NeighbourhoodQuality)}Encoded", nameof(HousePricing.NeighbourhoodQuality))
     .Append(context.Transforms.Concatenate(
-        "Features",
+        "NumericFeatures",
         nameof(HousePricing.SquareFootage),
         nameof(HousePricing.NumBedrooms),
         nameof(HousePricing.NumBathrooms),
         nameof(HousePricing.LotSize),
-        nameof(HousePricing.GarageSize),
-        $"{nameof(HousePricing.NeighbourhoodQuality)}Encoded"))
-    .Append(context.Transforms.NormalizeMeanVariance("Features"))
-    .Append(context.Regression.Trainers.Sdca(nameof(HousePricing.HousePrice), "Features"))
+        nameof(HousePricing.GarageSize)))
+    .Append(context.Transforms.NormalizeMeanVariance("StandardizedNumericFeatures", "NumericFeatures"))
+    .Append(context.Transforms.Concatenate(
+        "Features",
+        "StandardizedNumericFeatures",
+        nameof(HousePricing.NeighbourhoodQuality) + "Encoded"))
+    .Append(context.Regression.Trainers.Ols(nameof(HousePricing.HousePrice), "Features"))
     .Append(context.Transforms.DropColumns($"{nameof(HousePricing.NeighbourhoodQuality)}Encoded"));
 ITransformer model = pipeline.Fit(trainingData);
 clock.Stop();

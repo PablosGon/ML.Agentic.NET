@@ -1,9 +1,8 @@
 ﻿using Microsoft.ML.Data;
-using System.Numerics;
 
-namespace ML.API.Domain
+namespace ML.API.Models.Housing
 {
-    public class HousePricingOutput
+    public class HousingOutput
     {
         [ColumnName("Score")]
         public float HousePrice { get; set; }

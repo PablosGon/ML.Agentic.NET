@@ -20,6 +20,7 @@ var config = new CsvConfiguration(CultureInfo.InvariantCulture)
 };
 using var csvReader = new CsvReader(reader, config);
 var emailList = csvReader.GetRecords<Email>().ToList();
+emailList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Text) || string.IsNullOrWhiteSpace(x.Type));
 IDataView tickets = context.Data.LoadFromEnumerable(emailList);
 clock.Stop();
 var loadTime = clock.ElapsedMilliseconds;
@@ -38,7 +39,6 @@ IEstimator<ITransformer> pipeline = context.Transforms.Conversion.MapValueToKey(
     .Append(context.Transforms.Text.FeaturizeText($"{nameof(Email.Text)}Featurized", options: new Microsoft.ML.Transforms.Text.TextFeaturizingEstimator.Options()
     {
         CharFeatureExtractor = null,
-        CaseMode = Microsoft.ML.Transforms.Text.TextNormalizingEstimator.CaseMode.Lower,
         StopWordsRemoverOptions = new Microsoft.ML.Transforms.Text.StopWordsRemovingEstimator.Options()
         {
             Language = Microsoft.ML.Transforms.Text.TextFeaturizingEstimator.Language.English
